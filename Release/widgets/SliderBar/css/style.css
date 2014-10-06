@@ -1,0 +1,69 @@
+﻿
+.sliderBarContainer {
+    margin:0 auto;
+}
+.sliderBarContainer .sliderBarbg {
+    background-image:url(../images/sliderbackground.png);
+    background-repeat:repeat-x;
+    float:left;
+    height:25px;
+    vertical-align:middle;
+    text-align:center;
+    margin-top:2px;
+}
+
+.sliderBarContainer .sliderBarPlus {
+     background-image:url(../images/zoomin-button-at.png);
+     background-repeat:no-repeat;
+     width:35px;
+     height:28px;
+     float:left;
+     margin-left:-5px;
+}
+
+.sliderBarPlusMouseOver {
+     background-image:url(../images/zoomin-button-over.png);
+     background-repeat:no-repeat;
+     width:35px;
+     height:28px;
+     float:left;
+     margin-left:-5px;
+}
+
+.sliderBarIcreMouseOver {
+    background-image:url(../images/zoomout-button-over.png);
+    background-repeat:no-repeat;
+     float:left;
+     width:31px;
+     height:28px;
+}
+
+
+.sliderBarContainer .sliderBarIcre {
+     background-image:url(../images/zoomout-button-at.png);
+     background-repeat:no-repeat;
+     float:left;
+     width:31px;
+     height:28px;
+}
+
+
+
+.sliderBarContainer .sliderbtn {
+    position:relative;
+    background-image:url(../images/slidercontroller.png);
+    width:10px;
+    height:25px;
+    height:25px;
+    display:none;
+    z-index:1
+}
+
+.sliderBarbg .sliderBarLine {
+     background-image:url(../images/sliderinstants.png);
+     /*width:300px;*/
+     height:24px;
+     vertical-align:middle;
+     text-align:center;
+     top:50%;
+}

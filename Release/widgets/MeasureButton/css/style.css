@@ -1,0 +1,134 @@
+﻿.measurementpane {
+    position: absolute;
+    right: 60px;
+    top: 0;
+    z-Index: 999;
+}
+
+.measurementbar {
+    width: 244px;
+    height: 32px;
+    background-color: rgb(74,73,71);
+    line-height: 32px;
+    vertical-align: middle;
+    overflow: hidden;
+    
+}
+
+.measurementtitle{
+    color:white;
+    margin-left:17px;
+    font-weight:bold;
+    width: 195px;
+    height: 30px;
+    float:left;
+}
+
+#measurementclosebutton {
+    float:left;
+    margin-top:1px;
+    height: 31px;
+    width:31px;
+    vertical-align:central;    
+}
+
+    #measurementclosebutton:hover {
+        background-color:rgb(244,136,48);
+    }
+
+    #measurementclosebutton img {
+        margin-top:10px;
+        width: 10px;
+        height: 10px;
+        border:none;
+        margin-left:10px;
+        cursor: pointer;
+        vertical-align:top;
+    }
+
+.measurementbar div.closebutton_mouseover {
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+    float:left;
+    margin-top:11px;
+    background: url(../../../images/themes/blue/InfoWindows/icon_close_button_pressed.png) repeat scroll 0 0 transparent;
+}
+
+.measurementbar div.closebutton_mouseout {
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+    float:left;
+    margin-top:11px;
+    background: url(../../../images/themes/blue/InfoWindows/icon_close_button_normal.png) repeat scroll 0 0 transparent;
+}
+
+#measurementDiv {
+    background-color:rgb(251,250,248);
+    -moz-opacity:0.9;
+    -khtml-opacity: 0.9;
+    opacity: 0.9;    
+}
+
+.esriButton .dijitButtonNode{
+    width:20px !important;
+    height:20px !important;
+    margin-left:4px !important;
+}
+
+.claro .dijitButtonText {
+    font-size:13px !important;
+    margin-left:4px !important;
+}
+
+.esriMeasurementSeparator{
+    font-size:16px !important;
+    margin-left:8px !important;
+    padding-top:2px !important;
+    color:rgb(204,204,204);
+}
+
+.dijitMenuTable table tr {
+    background-color:rgb(245,245,245) !important;
+}
+
+#measurementDiv table tr :hover {
+    background-color:rgb(245,245,245) !important;
+}
+
+.esriToggleButton .dijitButtonNode{
+    height:22px !important;
+    padding-top:0px !important;
+}
+
+.claro .dijitArrowButtonInner{
+    margin-top:-2px !important;
+    margin-left:4px !important;
+}
+
+.esriMeasurement .esriMeasurementResultLabel {
+    text-align:left !important;
+}
+
+.areaIcon {
+}
+
+.distanceIcon {
+}
+
+.locationIcon {
+}
+
+.result {
+}
+
+.resultLabel {
+    padding-bottom:2px !important;
+    font-weight:normal !important;    
+    border-bottom-color:rgb(204,204,204) !important;
+}
+
+.unitDropDown {
+
+}

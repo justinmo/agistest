@@ -1,0 +1,139 @@
+{
+  "map": {
+    "commands": [{
+      "eventtype": "SendGISFeature",
+      "title": "View Property Info",
+      "action": "VIEW_PROPERTY",
+      "enable": false
+    },
+    {
+      "eventtype": "SendGISFeature",
+      "title": "Submit Service Request",
+      "action": "SERVICE_REQUEST",
+      "enable": false
+    },
+    {
+      "eventtype": "SendGISFeature",
+      "title": "Show Records",
+      "action": "SHOW_RECORD",
+      "enable": false
+    },
+    {
+      "eventtype": "SendGISFeature",
+      "title": "Apply",
+      "action": "CREATE_CAP",
+      "enable": false
+    },
+    {
+      "eventtype": "ShowServiceArea",
+      "title": "Show Service Area",
+      "action": "SHOW_SERVICE_AREA",
+      "enable": false
+    },
+    {
+      "eventtype": "ShowGISInformation",
+      "title": "Show GIS Information",
+      "action": "SHOW_GISINFORMATION",
+      "enable": false
+    }]
+  },
+  "theme": {
+    "name": "NeedToAdd",
+    "styles": [
+      "green"
+    ]
+  },
+  "preloadWidgets": {
+    "widgets": [
+	  {
+        "position": {
+          "right": 20,
+          "top": 10          
+        },
+        "id": "4",
+        "name": "SelectionButton",
+        "label": "Multi-selection",
+        "uri": "widgets/SelectionButton/Widget",
+		"customize":"false"
+      },
+	  {
+          "customize": "false",
+          "id": "ContentButton",
+          "name": "ContentButton",
+          "label": "Layers",
+          "position": {
+            "right": 20,
+            "top": 90           
+          },
+          "uri": "widgets/ContentButton/Widget"
+        },
+	  {
+        "position": {
+          "right": 68,
+		  "marginright":"38",
+          "top": 90,
+		  "width": 240,
+          "height": 280
+        },
+        "id": "5",
+        "name": "ContentBar",
+        "label": "Content Bar",
+        "uri": "widgets/ContentBar/Widget",
+		"customize":"true"
+      },	 
+	   {
+        "position": {
+          "right": 20,
+          "top": 10,
+		  "marginright":"50"
+        },
+        "id": "6",
+        "name": "sliderbar",
+        "label": "Slider Bar",
+        "uri": "widgets/Sliderbar/Widget",
+		"customize":"true"
+      },
+	  	  	  {
+        "position": {
+          "left": 10,
+          "bottom": 10,
+          "width": 180,
+          "height": 25
+        },
+        "id": "MapLegend",
+        "name": "LegendPanel",
+        "label": "Legend",
+        "uri": "widgets/LegendPanel/Widget",
+		"customize":"true"
+      },
+
+
+      {
+			"label": "Scale bar",
+			"uri": "widgets/Scalebar/Widget",
+			"position": {
+				"left": 180,
+				"bottom": 1
+			},
+			"id": "7",
+			"name": "Scalebar",
+			"customize":"true"
+		},
+
+
+
+		{
+        "position": {
+          "right": 20,
+          "top": 50
+        },
+        "id": "8",
+        "name": "MeasureButton",
+        "label": "Measurement",
+        "uri": "widgets/MeasureButton/Widget",
+		"customize":"false"
+      }
+    ]
+  },
+  "httpProxy": "/proxy.js",
+}

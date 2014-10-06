@@ -1,0 +1,215 @@
+/*
+ * <pre>
+ * 
+ *  Accela GIS
+ *  JavaScriptMap.cs
+ * 
+ *  Accela, Inc.
+ *  Copyright (C): 2014
+ * 
+ *  Description:
+ * 
+ *  Note
+ *  Created By:  Alvin Wei
+ *
+ * </pre>
+ */
+
+
+.custInfoGeocoding {
+    position: absolute;
+    z-index: 100;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    z-index: 99999;
+    width: 311px;
+}
+
+    .custInfoGeocoding .mainDiv {
+        position: relative;
+        z-index: 99;
+        overflow: auto;
+        padding: 2px 2px 2px 2px;
+    }
+
+    .custInfoGeocoding .leftDiv {
+        position: relative;
+        color: #002F2F;
+        overflow: auto;
+        float: left;
+        width: 54px;
+        height: 34px;
+        z-index: 100;
+    }
+
+    .custInfoGeocoding .rightDiv {
+        position: relative;
+        height: auto !important;
+        min-height: 20px;
+        color: #002F2F;
+        background-color: white;
+        overflow: auto;
+        height: 100%;
+    }
+
+
+
+    .custInfoGeocoding .leftBarStyle {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        background: url(../../../images/themes/blue/InfoWindows/icon_panel_left_bar.png) no-repeat scroll 0 0 transparent;
+        width: 54px;
+        height: 34px;
+    }
+
+
+    .custInfoGeocoding .titleBarStyle {
+        background-image: -moz-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+        background-image: -webkit-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+        background-image: -ms-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+        width: 253px;
+        height: 34px;
+        line-height: 34px;
+        vertical-align: middle;
+        overflow: hidden;
+        display: table;
+        position: relative;
+    }
+
+
+    .custInfoGeocoding .panelContentStyle {
+        position: relative;
+        top: 0px;
+        right: 0px;
+        height: auto !important;
+        min-height: 10px;
+    }
+
+    .custInfoGeocoding .panelDespStyle {
+        position: relative;
+        top: 0px;
+        right: 0px;
+        width: 190px;
+        height: auto !important;
+        padding: 10px;
+        word-break: break-all;
+        color: black;
+        font-size: 13px;
+        font-family: Verdana;
+    }
+
+
+    .custInfoGeocoding .buttonRowStyle {
+        width: 210px;
+        height: 38px;
+        margin-bottom: 8px;
+    }
+
+
+
+    .custInfoGeocoding .panelButtonImageStyle {
+        float: left;
+        margin-left: 10px;
+        background: url(../../../images/themes/blue/InfoWindows/icon_button_image.png) repeat scroll 0 0 transparent;
+    }
+
+
+    .custInfoGeocoding .closebutton_mouseout {
+   
+       margin-top:-6px;
+        margin-left:   -23px;
+   
+        position: absolute;
+        top: 50%;
+   
+        left:100%;
+        cursor: pointer;
+        
+        width: 12px;
+        height: 12px;
+         margin-right:-6px;
+    
+        line-height: 12px;
+        overflow: hidden;
+        vertical-align: middle;
+        background: url(../../../images/themes/blue/InfoWindows/icon_close_button_normal.png) repeat scroll 0 0 transparent;
+    }
+
+    .custInfoGeocoding .closebutton_mouseover {
+      
+      
+        margin-top:-6px;
+        margin-left:   -23px;
+   
+        position: absolute;
+        top: 50%;
+   
+        left:100%;
+        cursor: pointer;
+        
+        width: 12px;
+        height: 12px;
+         margin-right:-6px;
+    
+        line-height: 12px;
+        overflow: hidden;
+        vertical-align: middle;
+        background: url(../../../images/themes/blue/InfoWindows/icon_close_button_pressed.png) repeat scroll 0 0 transparent;
+ 
+    }
+
+    .custInfoGeocoding .title {
+        font-weight: bold;
+        margin-left: 5px;
+        color: white;
+        font-size: 13px;
+        font-family: Verdana;
+    }
+
+    .custInfoGeocoding .btninfowindow_mouseout {
+        border: none;
+        display: block;
+        border-style: hidden;
+        outline: none;
+        border-width: 0px;
+        color: white;
+        font-size: 15px;
+        font-family: Verdana;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        width: 100px;
+        height: 38px;
+        float: right;
+        line-height: 38px;
+        background-image: -moz-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+        background-image: -webkit-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+        background-image: -ms-linear-gradient( 90deg, rgb(27,94,175) 0%, rgb(58,124,203) 100%);
+    }
+
+
+    .custInfoGeocoding .btninfowindow_mouseover {
+        border: none;
+        display: block;
+        border-style: hidden;
+        outline: none;
+        border-width: 0px;
+        color: white;
+        font-size: 15px;
+        font-family: Verdana;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        width: 100px;
+        height: 38px;
+        float: right;
+        line-height: 38px;
+        background-image: -moz-linear-gradient( 90deg, rgb(213,107,19) 0%, rgb(252,141,41) 100%);
+        background-image: -webkit-linear-gradient( 90deg, rgb(213,107,19) 0%, rgb(252,141,41) 100%);
+        background-image: -ms-linear-gradient( 90deg, rgb(213,107,19) 0%, rgb(252,141,41) 100%);
+    }
+
+

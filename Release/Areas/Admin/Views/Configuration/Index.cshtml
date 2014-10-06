@@ -1,0 +1,42 @@
+﻿@model Accela.GIS.Map.Admin.Models.ConfigurationsModel
+@{
+    ViewBag.Title = "Configuration List";
+}
+
+<p class="message-success">@ViewBag.StatusMessage</p>
+
+<fieldset>
+    <table width="100%" cellspacing="0">
+        <caption><span class="title_left">@Html.ActionLink("Add New Integration", "Edit", "Configuration")</span><span class="title_right"></span></caption>
+        @foreach (var item in Model.listConfiguration)
+        {
+            <tr>
+                <td width="180"><img src="@item.Thumbnail" width="150" class="esriGalleryThumb"></td>
+                <td valign="top" align="left">                    
+                    <table>
+                        <tr>
+                            <td colspan="2" width="150" valign="top"><span class="titleLink">@Html.ActionLink(item.IntergrationName, "Edit", new { key = item.Key })</span></td>
+                        </tr>
+                        <tr>
+                            <td><label>GIS Service ID:</label></td>
+                            <td align="right">@item.AAGISServiceID</td>
+                        </tr>
+                        <tr>
+                            <td><label>Map Service:</label></td>
+                            <td align="right">@item.GetMapServiceName()</td>
+                        </tr>
+                        <tr>
+                            <td><label>Default:</label></td>
+                            <td align="right">@item.IsDefault</td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="80" valign="top">@Html.ActionLink("Edit", "Edit", new { key = item.Key }) @Html.ActionLink("Delete", "Delete", new { key = item.Key })</td>
+            </tr>
+        }
+    </table>
+</fieldset>
+
+@section Scripts {
+    @Scripts.Render("~/admin/bundles/jqueryval")
+}

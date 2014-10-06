@@ -1,0 +1,168 @@
+﻿body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Open Sans', Helvetica, Arial;
+}
+
+#agis-layout-manager {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.esriControlsBR {
+    display: none;
+}
+
+.accela-copyright-text {
+    display: inline;
+    cursor: default;
+    font-size: 13px;
+    line-height: 15px;
+    white-space: nowrap;
+    color: #666666;
+    font-family: 'Museo Sans', Helvetica, Arial;
+    float: left;
+}
+
+#accelaCopyright {
+    right: 5px;
+    bottom: 5px;
+    position: absolute;
+    z-index: 30;
+    text-align: left;
+    direction: ltr;
+    float: left;
+}
+
+#main-loading {
+    width: 100%;
+    height: 100%;
+    background-color: #344357;
+    text-align: center;
+    overflow: hidden;
+}
+
+    #main-loading img {
+        position: relative;
+        top: 50%;
+        height: auto;
+        width: auto;
+        display: block;
+        margin: auto;
+    }
+
+    #main-loading .loading-info {
+        font: 14px 'arial';
+        margin-top: 50px;
+        overflow: hidden;
+        position: relative;
+        top: 34%;
+        display: none;
+    }
+
+        #main-loading .loading-info .loading {
+            width: 260px;
+            height: 4px;
+            border-radius: 2px;
+            background-color: #192330;
+            margin: auto;
+        }
+
+        #main-loading .loading-info .loading-progress {
+            height: 4px;
+            border-radius: 2px;
+            background-color: white;
+        }
+
+#main-page {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#agis-logo {
+    margin-left: 5px;
+    float: left;
+    width: 50px;
+    height: 12px;
+    vertical-align: bottom;
+    z-index: 30;
+    cursor: pointer;
+    background-image: url("Images/app-logo.png");
+}
+
+.sprite {
+    background-image: url("images/sprite.png");
+}
+
+.checkbox_checked_black {
+    width: 22px;
+    height: 22px;
+    background-position-x: -180px;
+    background-position-y: -40px;
+    background-repeat: no-repeat;
+}
+
+.checkbox_unchecked_black {
+    width: 22px;
+    height: 22px;
+    background-position-x: -180px;
+    background-position-y: -62px;
+    background-repeat: no-repeat;
+}
+
+#alertMsg {
+    display: none;
+    width: 320px;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 10px black;
+    padding: 10px;
+    opacity: 0.8;
+    border-radius: 5px;
+    font-size: 16px;
+    position: absolute;
+    text-align: center;
+    background: #fff;
+    z-index: 100000;
+    height: 100px;
+
+}
+
+#alertMsg_info {
+    padding: 2px 15px;
+    line-height: 1em;
+    text-align: left;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#alertMsg_btn1, #alertMsg_btn2 {
+    display: inline-block;
+    padding-left: 3px;
+    color: #000000;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 300px;
+    height: 30px;
+    opacity: 0.8;
+    background-color: black;
+    border-radius: 6px;
+    padding-top: 5px;
+    color: white;
+}
+
+    #alertMsg_btn1 cite, #alertMsg_btn2 cite {
+        line-height: 24px;
+        display: inline-block;
+        padding: 0 13px 0 10px;
+        background: url(images/gray_btn.png) no-repeat right top;
+        font-style: normal;
+    }

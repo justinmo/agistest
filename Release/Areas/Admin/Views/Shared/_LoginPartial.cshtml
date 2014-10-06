@@ -1,0 +1,21 @@
+﻿@if (Request.IsAuthenticated) {
+    if (Request.Cookies.AllKeys.Contains("AGIS_UserName"))
+    {
+        ViewBag.AGISUserName = Request.Cookies["AGIS_UserName"].Value;
+    }
+    if (Request.Cookies.AllKeys.Contains("AGIS_AgencyName"))
+    {
+        ViewBag.AGISAgencyName = Request.Cookies["AGIS_AgencyName"].Value;
+    }
+    <text>
+        Hello, @Html.ActionLink((string)ViewBag.AGISUserName, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Manage" })!
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        }
+    </text>
+} else {
+    <ul>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

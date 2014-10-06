@@ -1,0 +1,58 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10" />
+</head>
+<body class="claro">
+    <div id="testDiv" style="width:100%;height:100%;"></div>
+    <script src="@ViewBag.GISUrl/api"></script>
+    <script>
+        var url = window.location.href;
+        var agency = (url.indexOf('?') > -1) ? url.split('?')[1] : "ADBC";
+        require(['AGIS'], function (Map) {
+
+            Map.addEventListener("AGISMapLoaded", function (event) {
+                var map = event.eventData; //Map
+                var type = event.eventType; //AGISMapLoaded
+                //alert('loaded');
+            });
+            Map.initMap("testDiv", { "agencyCode": agency });
+
+            // Method 1
+            Map.addEventListener("SendGISFeature", function (event) {
+                var type = event.eventType; // type = SendGISFeature
+                var data = event.eventData;
+                /*
+
+                    data = {
+                      'command': 'CREATE_CAP',
+                      'mapServiceId': 'AGIS_SACCO',
+                      'gISObjects': [{
+                        'type': 'Parcels',
+                        'key': '00901120240000'
+                      }]
+                    }
+
+                */
+                alert(type + "\n" + json2str(data));
+            });
+
+        });
+
+        function json2str(o) {
+            var arr = [];
+            var fmt = function (s) {
+                if (typeof s == 'object' && s != null) return json2str(s);
+                return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
+            }
+            for (var i in o) arr.push("'" + i + "':" + fmt(o[i]));
+            return '{' + arr.join(',') + '}';
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+﻿@model Accela.GIS.Map.Admin.Models.RegisterModel
+@{
+    ViewBag.Title = "Create a new account";
+}
+
+@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+
+    <fieldset>
+        <legend>Registration Form</legend>
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.AgencyName)
+                @Html.DropDownListFor(m => m.AgencyName, (IEnumerable<SelectListItem>)ViewBag.Agencies)
+                @Html.ValidationMessageFor(m => m.AgencyName)
+                <span> <a href="javascript:void(0)" onclick="AddAgency()">Add Agency</a></span>
+            </li>
+            <li>
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.PasswordFor(m => m.ConfirmPassword)
+            </li>
+        </ol>
+        <input type="submit" value="Register" />
+    </fieldset>
+}
+
+<div id="agencywin" style=" display:none;">
+    <label>Agency Name: </label><input type="text" name="newagencyname" id="newagencyname" />
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/admin/bundles/jqueryval")
+}
+<script>
+    /*
+        Add Agency
+    */
+    function AddAgency() {
+        $("#agencywin").dialog({
+            dialogClass: "no-titlebar",
+            resizable: false,
+            width: 400,
+            height: 200,
+            buttons: [
+              {
+                  text: "OK",
+                  click: function () {
+                      PostAgency($("#newagencyname").val());
+                      $("#newagencyname").val("");
+                      $(this).dialog("close");
+                  }
+              },
+              {
+                  text: "Cancel",
+                  click: function () {
+                      $(this).dialog("close");
+                  }
+              }
+            ]
+        });
+    }
+
+    function PostAgency(agencyName)
+    {
+        $.post("@Url.Action("AddAgency")", { agencyName: agencyName }, function (response) {
+            if (response.error == null) {
+                if (response.agencies != null && response.agencies.length > 0) {
+                    $("#AgencyName").empty();
+                    for (var i = 0; i < response.agencies.length; i++) {
+                        $("#AgencyName").append("<option value='" + response.agencies[i].name + "'>" + response.agencies[i].name + '</option>');
+                    }
+                    $("#AgencyName").val(agencyName);
+                }
+            } else {
+                alert(response.error);
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,706 @@
+﻿@model Accela.GIS.Map.Admin.Models.ConfigurationModel
+@{
+    ViewBag.Title = "Edit Integration";
+}
+
+<section id="intergrationForm">
+
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(m => m.Key)
+        <fieldset>
+            <legend>Define Environment</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(m => m.IntergrationName)
+                    @Html.TextBoxFor(m => m.IntergrationName)
+                    @Html.ValidationMessageFor(m => m.IntergrationName)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.AAGISServiceID)
+                    @Html.TextBoxFor(m => m.AAGISServiceID)
+                    @Html.ValidationMessageFor(m => m.AAGISServiceID)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.AppServerURL)
+                    @Html.TextBoxFor(m => m.AppServerURL)
+                    @Html.ValidationMessageFor(m => m.AppServerURL)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.AAUserName)
+                    @Html.TextBoxFor(m => m.AAUserName)
+                    @Html.ValidationMessageFor(m => m.AAUserName)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.AAPassword)
+                    @Html.PasswordFor(m => m.AAPassword, new { @value = Model.AAPassword })
+                    @Html.ValidationMessageFor(m => m.AAPassword)
+                </li>
+                <li>
+                    @Html.CheckBoxFor(m => m.IsDefault)
+                    @Html.LabelFor(m => m.IsDefault, new { @class = "checkbox" })
+                </li>
+            </ol>
+        </fieldset>
+        <fieldset>
+            <legend>Map Service</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(m => m.GISUserName)
+                    @Html.TextBoxFor(m => m.GISUserName)
+                    @Html.ValidationMessageFor(m => m.GISUserName)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.GISPassword)
+                    @Html.PasswordFor(m => m.GISPassword, new { @value = Model.GISPassword })
+                    @Html.ValidationMessageFor(m => m.GISPassword)
+                    <span id="RetrieveSpan">
+                        @Ajax.ActionLink("Retrieve Service", "RetrieveMap",
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    OnBegin = "RetrieveServiceBegin",
+                                    OnSuccess = "RetrieveServiceSuccess",
+                                    OnFailure = "RetrieveServiceFailure",
+                                    OnComplete = "RetrieveServiceComplete"
+                                })
+                    </span>
+                    <img src="@ViewBag.BaseUrl/Areas/Admin/Images/loading.gif" id="imgLoading" style="display:none;" />
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.MapService)
+                    @Html.DropDownListFor(m => m.MapService, Model.GetMapServiceList())
+                    @Html.ValidationMessageFor(m => m.MapService)
+                </li>
+                <li>
+                    <span id="thumbnail"></span>
+                </li>
+                <li>
+                    <div id="layerlist"></div>
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.GeocodingService)
+                    @Html.DropDownListFor(m => m.GeocodingService, Model.GetGeocodingServiceList())
+                    @Html.ValidationMessageFor(m => m.GeocodingService)
+                </li>
+                <li>
+                    @Html.LabelFor(m => m.RoutingService)
+                    @Html.DropDownListFor(m => m.RoutingService, Model.GetRoutingServiceList())
+                    @Html.ValidationMessageFor(m => m.RoutingService)
+                </li>
+            </ol>
+        </fieldset>
+        <fieldset>
+            <legend>Map Commands @Html.HiddenFor(m=>m.GISCommands)</legend>
+            <ol id="GISCommandList"></ol>
+        </fieldset>
+
+        <fieldset>
+            <legend>Service Area Drive</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(m => m.ServiceAreaDriveTime)
+                    @Html.TextBoxFor(m => m.ServiceAreaDriveTime)
+                    @Html.ValidationMessageFor(m => m.ServiceAreaDriveTime)
+                </li>
+            </ol>
+        </fieldset>
+
+        <fieldset>
+            <legend>Widgets @Html.HiddenFor(m => m.GISWidgets)</legend>
+            <ol id="GISWidgetList">
+                <span><a href="javascript:void(0)" onclick="AddWidgets()">Show/Hide Widgets</a></span>
+                <div id="WidgetContainer">
+                    <div id="WidgetTabs"></div>
+                </div>                
+
+            </ol>
+        </fieldset>
+                
+        <input onclick="SetCommandValue();" type="submit" value="Save" />
+        @Html.ActionLink("Cancel", "Index", "Configuration")
+    }
+</section>
+<div id="selecticonwin" style=" display:none;"></div>
+<div id="widgetswin" style=" display:none;"></div>
+<script>
+
+    var currentmapservice = {};
+    var currentwidgets = [];
+    var baseUrl = "@ViewBag.BaseUrl";
+
+    /*
+        Document Ready
+    */
+    readyFunction = function () {        
+            currentmapservice = GetMapService();
+            var ajaxRetrieveObj = $("#RetrieveSpan").find("a:first-child");
+            var ajaxRetrieveUrl = ajaxRetrieveObj.attr("href");
+            var ChangeAjaxRetrieveLink = function () {
+                var username = $("#GISUserName").val();
+                var password = $("#GISPassword").val();
+                ajaxRetrieveObj.attr("href", ajaxRetrieveUrl + "?UserName=" + username + "&Password=" + password);
+            }
+            $("#GISUserName").blur(ChangeAjaxRetrieveLink);
+            $("#GISPassword").blur(ChangeAjaxRetrieveLink);
+            $("#MapService").change(function () {
+                MapServiceChange();
+            });
+            ChangeAjaxRetrieveLink();            
+            ShowThumbnail(currentmapservice);
+            if(currentmapservice.layers!=null)
+            {
+                ShowLayers(currentmapservice.layers);
+            }
+            GetImages4LayerICON();
+            CreateCommandList();
+
+            var widgetVal = $('#GISWidgets').val();
+            if (widgetVal != "") {
+                var widgets = eval("(" + widgetVal + ")");
+                if (widgets != null) {
+                    for (var i = 0; i < widgets.length; i++) {
+                        if (widgets[i]) {
+                            currentwidgets.push(widgets[i].name);
+                        }
+                    }
+                }
+            }
+
+            $('#WidgetTabs').tabs();
+            GetWidgetList();
+    };
+
+    /*
+        Set Commands
+    */
+    function SetCommandValue()
+    {
+        var json = $("#GISCommands").val();
+        var data = eval("(" + json + ")");
+
+        var array = [];
+        $("input[name='CommandItem']:checked").each(function () {
+            array.push($(this).val());
+        });
+        for(var i=0;i<data.length;i++)
+        {
+            if(data[i])
+            {
+                if($.inArray(data[i].action,array)>-1)
+                {
+                    data[i].enable = "true";
+                } else {
+                    data[i].enable = "false";
+                }
+            }
+        }
+        var result = "[";
+        for (var i = 0; i < data.length; i++) {
+            if (data[i]) {
+                result += "{\"enable\":\"" + data[i].enable + "\", \"eventtype\" :\"" + data[i].eventtype + "\", \"title\" :\"" + data[i].title + "\", \"action\" :\"" + data[i].action + "\" }";
+                if (i != data.length - 1) {
+                    result += ",";
+                }
+            }
+        }
+        result += "]";
+        $("#GISCommands").val(result);
+    }
+
+    /*
+        Add Widgets
+    */
+    function AddWidgets()
+    {
+        $("#widgetswin").dialog({
+            dialogClass: "no-titlebar",
+            resizable: false,
+            width: 700,
+            height: 300,
+            buttons: [
+              {
+                  text: "OK",
+                  width: 70,
+                  click: function () {                      
+                      UpdateWidgetTabs();
+                      $(this).dialog("close");
+                  }
+              },
+              {
+                  text: "Cancel",
+                  width:70,
+                  click: function () {
+                      $(this).dialog("close");
+                  }
+              }
+            ]
+        });
+    }
+
+    /*
+        UpdateWidgetTabs
+    */
+    function UpdateWidgetTabs()
+    {
+        //selectwidget
+        $("#WidgetContainer").empty();
+        $("#WidgetContainer").append('<div id="WidgetTabs"></div>');
+        $("#WidgetTabs").append('<ul class="tabs"></ul>');
+        var result = "";
+        $("input[name='selectwidget']:checked").each(function () {
+            //Group content bar and content button.  
+            if (this.id == 'ContentBar')
+            {
+                if (!document.getElementById("ContentButton").checked)
+                {
+                    return true;
+                }
+            }
+
+            var json = $(this).val();
+            result += json + ",";
+            var data = eval("(" + json + ")");
+
+            //Content bar not add into tabs.
+            if (this.id != 'ContentBar')
+            {
+                $("#WidgetTabs ul.tabs").append('<li><a href="#fragment_' + data.name + '">' + data.label + '</a></li>');
+                var html = "";
+                $.each(data, function (k, v) {
+                    if (v != null) {
+                        if (k.toLowerCase() == "position") {
+                            $.each(v, function (a, b) {
+                                if (b != null) {
+                                    html += "<li><label class='propertylabel'>" + a + ":</label> <label class='propertyvalue'>" + b + "</label></li>";
+                                }
+                            });
+                        } else {
+                            html += "<li><label class='propertylabel'>" + k + ":</label> <label class='propertyvalue'>" + v + "</label></li>";
+                        }
+                    }
+                });
+                $("#WidgetTabs").append('<div id="fragment_' + data.name + '"><ul class="widgetproperty">' + html + '</ul></div>');
+            }            
+        });
+        result = result.substring(0, result.length - 1);
+        result = "[" + result + "]";
+        $('#GISWidgets').val(result);
+        $('#WidgetTabs').tabs();
+    }
+
+    /*
+        Load Widget list
+    */
+    function GetWidgetList() {
+        var loading = '<img src="' + baseUrl + '/Areas/Admin/Images/loading.gif"/>';
+        $("#widgetswin").html(loading);
+        $.post("@Url.Action("GetWidgetList")", null, function (response) {
+            $("#widgetswin").empty();
+            if (response.error == null) {
+                var html = "<ul class='imagelist'>";
+                if (response.widgets != null && response.widgets.length > 0) {
+
+                    for (var i = 0; i < response.widgets.length; i++) {
+                        if (response.widgets[i]) {
+                            var checked = "";
+                            if ($.inArray(response.widgets[i].name, currentwidgets) > -1) {
+                                checked = "checked ='checked'";
+                            }
+                            //Content bar display none.
+                            if (response.widgets[i].name == "ContentBar") {
+                                html += "<li class='widgetitem' style='display:none'><input checked ='checked'" + " id='" + response.widgets[i].name + "' name='selectwidget' type='checkbox' value='" + response.widgets[i].json + "' /><label class='checkbox'>" + response.widgets[i].label + "</label></li>";
+                            }
+                            else {
+                                html += "<li class='widgetitem'><input " + checked + " id='" + response.widgets[i].name + "' name='selectwidget' type='checkbox' value='" + response.widgets[i].json + "' /><label class='checkbox'>" + response.widgets[i].label + "</label></li>";
+                            }
+                        }
+                    }
+
+                } else {
+                    html += "<li>No Widget</li>";
+                }
+                html += "</ul>";
+                $("#widgetswin").html(html);
+                UpdateWidgetTabs();
+            }
+        });
+    }
+
+    /*
+        Create Command List
+    */
+    function CreateCommandList()
+    {        
+        $("#GISCommandList").empty();
+        var json = $("#GISCommands").val();        
+        var commands = eval("(" + json + ")");        
+        if (commands) {
+            for (var i = 0; i < commands.length; i++) {                
+                if (commands[i]) {
+                    var checked = "";
+                    if (commands[i].enable.toLowerCase() == "true") {
+                        checked = "checked ='checked'";
+                    }
+                    $("#GISCommandList").append('<li class="commanditem"><input ' + checked + ' name="CommandItem" id="' + commands[i].action + '" type="checkbox" value="' + commands[i].action + '"/><label class="checkbox">' + commands[i].title + '</label></li>');
+                }
+            }
+        }
+    }
+
+    /*
+        Get Images for Layer ICON
+    */
+    function GetImages4LayerICON() {
+        var loading = '<img src="' + baseUrl + '/Areas/Admin/Images/loading.gif"/>';
+        $("#selecticonwin").html(loading);
+        UpdateLayerICONList();
+    }
+
+    /*
+        Update Layer ICON List
+    */
+    function UpdateLayerICONList()
+    {        
+        $.post("@Url.Action("GetImagesForLayerICON")", null, function (response) {
+            $("#selecticonwin").empty();
+            if (response.error == null) {
+                var html = "<ul class='imagelist'>";
+                if (response.images != null && response.images.length > 0) {
+
+                    for (var i = 0; i < response.images.length; i++) {
+                        html += "<li class='iconitem'><img src='" + baseUrl + response.images[i].url + "'/><br><input name='selecticon' type='radio' value='" + response.images[i].url + "' /></li>";
+                    }
+
+                } else {
+                    html += "<li>No ICON</li>";
+                }
+                html += "</ul>";                
+                $("#selecticonwin").html(html);              
+            }
+        });
+    }
+
+    /*
+        Map Service Change
+    */
+    function MapServiceChange() {
+        var serivce = GetMapService();
+        ShowThumbnail(serivce);
+        var loading = '<img src="' + baseUrl + '/Areas/Admin/Images/loading.gif"/>';
+        $("#layerlist").html(loading);
+        RetrieveLayers(serivce);
+    }
+
+    /*
+        Show Upload Form
+    */
+    function ShowUploadForm()
+    {
+        var loading = '<img src="' + baseUrl + '/Areas/Admin/Images/loading.gif"/>';
+        var uploadform = '<form id="uploadform" method="post" enctype="multipart/form-data"><input type="file" id="uploadImage" name="uploadImage" /><div id="upload"></div></form>';
+        $(".ui-dialog-buttonpane").append(uploadform);
+
+        $("#uploadImage").change(function () {
+            $("#uploadform").ajaxSubmit({
+                url: baseUrl + '/Areas/Admin/UploadImage.ashx',
+                beforeSubmit: function () {
+                    $("#upload").html(loading);
+                },
+                success: function (data) {
+                    $("#upload").empty();
+                    if (data != "Failure") {
+                        UpdateLayerICONList();
+                    }
+                }
+            });
+        });
+    }
+
+    /*
+        Set Layer ICON Event
+    */
+    function SetLayerIconEvent() {
+        $(".layer_image_button").each(function (index, element) {
+            $(this).click(function () {
+                var img = $(this);
+                $("#selecticonwin").dialog({
+                    dialogClass: "no-titlebar",
+                    resizable: false,
+                    width: 700,
+                    height: 500,
+                    buttons: [
+                      {
+                          text: "OK",
+                          width:70,
+                          click: function () {
+                              var url = $("input[name='selecticon']:checked").val();
+                              var id = img.attr('id');
+                              img.attr('src', baseUrl + url);
+
+                              var data = GetMapService();
+                              for (var i = 0; i < data.layers.length; i++)
+                              {
+                                  if(data.layers[i] && data.layers[i].name==id)
+                                  {
+                                      data.layers[i].icon = url;
+                                  }
+                              }
+                              SaveService(data);
+
+                              $(this).dialog("close");
+                          }
+                      },
+                      {
+                          text: "Cancel",
+                          width: 70,
+                          click: function () {
+                              $(this).dialog("close");
+                          }
+                      }
+                    ]
+                });
+                ShowUploadForm();
+            });
+        });
+    }
+
+    /*
+        SetLayerIdfieldEvent
+    */
+    function SetLayerIdfieldEvent() {
+        $(".layer_idfield_select").each(function (index, element) {
+            $(this).change(function () {
+                var select = $(this);
+                var layername = select.attr('name');
+                var idfield = select.val();
+                var data = GetMapService();
+                for (var i = 0; i < data.layers.length; i++) {
+                    if (data.layers[i].name == layername) {
+                        var fields = data.layers[i].fields;
+                        for(var j=0;j<fields.length;j++)
+                        {
+                            if (fields[j].id.toLowerCase() == idfield.toLowerCase())
+                            {
+                                fields[j].idfield = true;
+                            } else {
+                                fields[j].idfield = false;
+                            }
+                        }
+                        break;
+                    }
+                }
+                SaveService(data);
+            });
+        });
+    }
+
+    /*
+        Get Map Service
+    */
+    function GetMapService() {
+        var strVal = $('#MapService').val();
+        var arrVal = {};
+        if (strVal && strVal != "") {
+            arrVal = eval("("+strVal+")");
+        }
+        return arrVal;
+    }
+
+    /*
+        Repalce All
+    */
+    function replaceAll(string, find, replace) {
+        return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    }
+
+    /*
+        Retrieve Layer
+    */
+    function RetrieveLayers(serivce) {
+        if (serivce.id) {
+            $("#MapService").attr("disabled", true);
+            $.post("@Url.Action("RetrieveLayer")", { id: serivce.id, token: serivce.token, ssl: serivce.ssl }, function (response) {
+                $("#layerlist").empty();
+                $("#MapService").attr("disabled", false);
+                if (response.error == null) {
+                    if (response.layers != null && response.layers.length > 0) {
+                        var layers = [];
+                        for (var i = 0; i < response.layers.length; i++) {
+                            if (currentmapservice.id != "" && currentmapservice.id == serivce.id) {
+                                for (var j = 0; j < currentmapservice.layers.length; j++) {
+                                    if (currentmapservice.layers[j]) {
+                                        if (currentmapservice.layers[j].name == response.layers[i].name
+                                            && currentmapservice.layers[j].id == response.layers[i].id) {
+                                            response.layers[i].icon = currentmapservice.layers[j].icon;
+                                        }
+                                    }
+                                }
+                            }
+                            layers.push({ id: response.layers[i].id, name: response.layers[i].name, icon: response.layers[i].icon, fields: response.layers[i].fields });
+                        }
+                        SaveLayers(layers);
+                        ShowLayers(layers);
+                    }
+                }
+            });
+        } else {
+            $("#layerlist").empty();
+        }
+    }
+
+    /*
+        Save Layer
+    */
+    function SaveLayers(layers)
+    {
+        var serivce = GetMapService();
+        serivce.layers = layers;
+        SaveService(serivce);
+    }
+
+    /*
+        Save Service
+    */
+    function SaveService(serivce)
+    {
+        var layers = "[";
+        if(serivce.layers&&serivce.layers.length>0)
+        {
+            for(var i=0;i<serivce.layers.length;i++)
+            {
+                if(serivce.layers[i])
+                {
+                    var fields = "[";
+                    for (var j = 0; j < serivce.layers[i].fields.length; j++)
+                    {
+                        if(serivce.layers[i].fields[j])
+                        {
+                            fields += "{ \"id\" :\"" + serivce.layers[i].fields[j].id + "\", \"name\" :\"" + serivce.layers[i].fields[j].name + "\", \"idfield\":" + serivce.layers[i].fields[j].idfield + "}";
+                            if (j != serivce.layers[i].fields.length - 1) {
+                                fields += ",";
+                            }
+                        }
+                    }
+                    fields += "]";
+
+                    layers += "{ \"id\" :\"" + serivce.layers[i].id + "\", \"name\" :\"" + serivce.layers[i].name + "\", \"icon\" :\"" + serivce.layers[i].icon + "\", \"fields\":" + fields + " }";
+                    if (i != serivce.layers.length - 1) {
+                        layers += ",";
+                    }
+                }
+            }
+        }
+        layers += "]";
+        $("#MapService option").each(function () {
+            if ($(this).text() == serivce.name) {
+                $(this).val("{\"name\":\"" + serivce.name + "\",\"id\":\"" + serivce.id + "\",\"token\":\"" + serivce.token + "\",\"ssl\":\"" + serivce.ssl + "\",\"layers\":" + layers + "}");
+            }
+        });
+    }
+
+    /*
+        Show Layer
+    */
+    function ShowLayers(layers) {
+        var html = "<table class='tablelist'><tr><th>Icon</th><th >Layer Name</th><th>ID Field</th></tr>";
+        if (layers != null && layers.length > 0) {
+            for (var i = 0; i < layers.length; i++) {
+                if (layers[i] != null) {
+                    var field = "";
+                    if (layers[i].fields && layers[i].fields.length > 0) {
+                        for (var j = 0; j < layers[i].fields.length; j++) {
+                            if(layers[i].fields[j])
+                            {
+                                var selected = "";
+                                if (layers[i].fields[j].idfield == true || layers[i].fields[j].idfield == "true" || layers[i].fields[j].idfield == "True") {
+                                    selected = "selected='selected'";
+                                }
+                                field += "<option " + selected + " value='" + layers[i].fields[j].id + "'>" + layers[i].fields[j].id + "</option>";
+                            }
+                        }
+                    }
+                    html += "<tr><td><img class='layer_image_button' src='" + baseUrl + layers[i].icon + "' id='" + layers[i].name + "'/></td><td>" + layers[i].name + "</td><td ><select style=\"width:200px\" class='layer_idfield_select'  name='" + layers[i].name + "'>" + field + "</select></td></tr>";
+                }
+            }
+        } else {
+            html += "<tr><td colspan='3' align='center'>No layers</td></tr>";
+        }
+        html += "</table>";
+        $("#layerlist").html(html);        
+        SetLayerIconEvent();
+        SetLayerIdfieldEvent();
+    }
+
+    /*
+        Show Thumbnail
+    */
+    function ShowThumbnail(serivce) {
+        if (serivce.id) {
+            var url = (serivce.ssl ? "https" : "http") + "://accela.maps.arcgis.com/sharing/rest/content/items/" + serivce.id + "/info/thumbnail/ago_downloaded.png?token=" + serivce.token;
+            $("#thumbnail").html('<img class="esriGalleryThumb" src="' + url + '">');
+        } else {
+            $("#thumbnail").empty();
+        }
+    }
+
+    /*
+        Retrieve Service Begin
+    */
+    function RetrieveServiceBegin(XMLHttpRequest) {
+        $("#MapService").empty();
+        $("#GeocodingService").empty();
+        $("#RoutingService").empty();
+        $("#imgLoading").show();
+        var loading = '<img src="' + baseUrl + '/Areas/Admin/Images/loading.gif"/>';
+        $("#thumbnail").html(loading);
+        $("#layerlist").html(loading);
+        $("#MapService").attr("disabled", true);
+    }
+
+    /*
+        Retrieve Service Success
+    */
+    function RetrieveServiceSuccess(XMLHttpRequest, textStatus) {
+        if (XMLHttpRequest.error == null) {
+            for (var i = 0; i < XMLHttpRequest.items.length; i++) {
+                var item = XMLHttpRequest.items[i];
+                if(item)
+                {
+                    var select = "";
+                    if (currentmapservice && currentmapservice.id && item.id)
+                    {
+                        if (currentmapservice.id.toLowerCase() == item.id.toLowerCase()) {
+                            select = " selected = 'selected' ";
+                        }
+                    }
+                    $("#MapService").append("<option " + select + " value='{\"name\":\"" + item.title + "\",\"id\":\"" + item.id + "\",\"token\":\"" + item.token + "\",\"ssl\":\"" + item.ssl + "\",\"layers\":[]}'>" + item.title + '</option>');
+                }
+            }
+            $("#GeocodingService").append("<option value='{\"name\":\"" + XMLHttpRequest.geocode.name + "\",\"url\":\"" + XMLHttpRequest.geocode.url + "\"}'>" + XMLHttpRequest.geocode.name + '</option>');
+            $("#RoutingService").append("<option value='{\"name\":\"" + XMLHttpRequest.route.name + "\",\"url\":\"" + XMLHttpRequest.route.url + "\"}'>" + XMLHttpRequest.route.name + '</option>');
+        } else {
+            alert(XMLHttpRequest.error);
+        }
+        $("#MapService").attr("disabled", false);
+    }
+
+    /*
+        Retrieve Service Complete
+    */
+    function RetrieveServiceComplete(XMLHttpRequest, textStatus) {
+        $("#imgLoading").hide();
+        MapServiceChange();
+    }
+
+    /*
+        Retrieve Service Failure
+    */
+    function RetrieveServiceFailure(XMLHttpRequest, textStatus, errorThrown) {
+        if (errorThrown != null) {
+            alert(errorThrown);
+        }
+    }
+</script>

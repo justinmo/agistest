@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - Accela GIS Administration Site</title>
+        <link href="~/admin/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/admin/Content/css")
+        @Styles.Render("~/admin/Content/themes/base/css")
+        @Scripts.Render("~/admin/bundles/modernizr")
+        <script>
+            var readyFunction = null;
+        </script>
+    </head>
+    <body>
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p class="site-title">@ViewBag.Title</p>
+                </div>
+                <div class="float-right">
+                    <section id="login">
+                        @Html.Partial("_LoginPartial")
+                    </section>
+                    <nav>
+                        @if (Request.IsAuthenticated) {
+                        <ul id="menu">
+                            <li>@Html.ActionLink("Configuration", "Index", "Configuration")</li>
+                        </ul>
+                        } else {
+    
+                        }
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+            @RenderSection("featured", required: false)
+            <section class="content-wrapper main-content clear-fix">
+                @RenderBody()
+            </section>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; @DateTime.Now.Year Accela Inc. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        @Scripts.Render("~/admin/bundles/jquery")
+        @Scripts.Render("~/admin/bundles/jqueryui")
+        @Scripts.Render("~/admin/bundles/jqueryval")
+        @Scripts.Render("~/admin/bundles/jqueryform")
+        @RenderSection("scripts", required: false)
+        <script>
+            $(document).ready(function () {
+                if (readyFunction) {
+                    readyFunction();
+                }
+            });
+            
+        </script>
+    </body>
+</html>

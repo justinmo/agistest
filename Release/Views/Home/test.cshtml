@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Unit Test</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10" />
+    <link rel="shortcut icon" type="image/png" href="../../UnitTest/jasmine/jasmine-standalone-2.0.3/lib/jasmine-2.0.3/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="../../UnitTest/jasmine/jasmine-standalone-2.0.3/lib/jasmine-2.0.3/jasmine.css">
+    <script type="text/javascript" src="../../UnitTest/jasmine/jasmine-standalone-2.0.3/lib/jasmine-2.0.3/jasmine.js"></script>
+    <script type="text/javascript" src="../../UnitTest/jasmine/jasmine-standalone-2.0.3/lib/jasmine-2.0.3/jasmine-html.js"></script>
+    <script type="text/javascript" src="../../UnitTest/jasmine/jasmine-standalone-2.0.3/lib/jasmine-2.0.3/boot.js"></script>
+</head>
+<body class="claro">
+    <script src="@ViewBag.GISUrl/api"></script>
+    <script>
+        require(["dojo/ready", "UTest/MockMap", "UTest/Main", "UTest/ServiceAreaTest"], function (ready) {
+            ready(function () {
+                jasmine.getEnv().addReporter(
+                    new jasmine.HtmlReporter()
+                   );
+                jasmine.getEnv().execute();
+
+            });
+        });
+    </script>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+</body>
+</html>
